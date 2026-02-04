@@ -25,6 +25,38 @@
     }
   </style>
 </head>
+  <script>
+  // 14-frame braille title animation (loop)
+  const frames = [
+    "⠉⠉⠀",
+    "⠋⠁⠀",
+    "⠏⠀⠀",
+    "⠧⠀⠀",
+    "⠦⠄⠀",
+    "⠤⠤⠀",
+    "⠀⠤⠤",
+    "⠀⠠⠴",
+    "⠀⠀⠼",
+    "⠀⠀⠹",
+    "⠀⠈⠙",
+    "⠀⠉⠉",
+    "⠈⠉⠁",
+    "⠉⠉⠀"
+  ].map(s => s.replace(/\s+$/g, "")); // trim trailing spaces (optional)
+
+  const prefix = "";          // 你想加前缀可写这里，比如 "focus "
+  const intervalMs = 180;     // 动画速度：数值越大越慢（建议 120~300）
+  let i = 0;
+
+  function tick() {
+    document.title = prefix + frames[i];
+    i = (i + 1) % frames.length;
+  }
+
+  tick();
+  setInterval(tick, intervalMs);
+</script>
+
 <body>
   <div class="hint">
     SITE INITIALIZING
