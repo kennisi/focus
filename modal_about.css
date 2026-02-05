@@ -33,7 +33,7 @@
 
   .bar__track { stroke: hsl(0 0% 100% / var(--track-alpha, 0)); }
 
-  .scroller > div { height: 100%; width: 100%; overflow: auto; background: light-dark(#fff, #000); border-radius: calc(var(--radius) * 1px); display: grid; grid-auto-flow: row; gap: 0; margin: 0; padding: calc(var(--padding) * 1px) 0; list-style-type: none; scroll-snap-type: y mandatory; scroll-timeline: --scroller; scroll-behavior: smooth; outline: 1px solid color-mix(in lch, canvas, canvasText); outline-offset: 1px; }
+  .scroller > div { height: 100%; width: 100%; overflow: auto; background: light-dark(#fff, #000); border-radius: calc(var(--radius) * 1px); display: grid; grid-auto-flow: row; gap: 0; margin: 0; padding: calc(var(--padding) * 1px) 0; list-style-type: none; scroll-snap-type: y mandatory; scroll-timeline: --scroller; scroll-behavior: smooth; outline: none !important;  outline-offset: none !important;  }
 
   .scroller > div > * { padding-inline: 1.25rem; }
 }
