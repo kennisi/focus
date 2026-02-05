@@ -153,10 +153,13 @@ function setStaticFavicon(emoji = "👀") {
 
   // ===== 其他 结束 =====
   // ===== 调用外部模块 =====
-    let aboutModalLoaded = false;
+let aboutModalLoaded = false;
 
 function openAboutModal() {
-  if (aboutModalLoaded && window.RhythmAboutModal?.open) { window.RhythmAboutModal.open(); return; }
+  if (aboutModalLoaded && window.RhythmAboutModal?.open) {
+    window.RhythmAboutModal.open();
+    return;
+  }
 
   if (!document.getElementById("modal-about-css")) {
     const link = document.createElement("link");
@@ -167,11 +170,17 @@ function openAboutModal() {
   }
 
   const s = document.createElement("script");
+  s.id = "modal-about-js";
+  s.type = "module";
   s.src = "./modal_about.js";
-  s.onload = () => { aboutModalLoaded = true; window.RhythmAboutModal?.open?.(); };
-  s.onerror = () => alert("Failed to load modal_about files.");
+  s.onload = () => {
+    aboutModalLoaded = true;
+    window.RhythmAboutModal?.open();
+  };
+  s.onerror = () => alert("Failed to load modal_about.js");
   document.body.appendChild(s);
 }
+
   // ===== 调用外部模块 结束 =====
   
   function makeDefaultState() {
@@ -631,7 +640,7 @@ function openAboutModal() {
   function renderSettings() {
     settingsInner.innerHTML = "";
 
-    const aboutCard = document.createElement("div");
+const aboutCard = document.createElement("div");
 aboutCard.className = "card";
 aboutCard.setAttribute("role", "button");
 aboutCard.tabIndex = 0;
@@ -640,7 +649,7 @@ aboutTitle.className = "card__title";
 aboutTitle.textContent = "About";
 const aboutText = document.createElement("p");
 aboutText.className = "note";
-aboutText.textContent = "Tap to open and learn more.";
+aboutText.textContent = "Click to open and learn more.";
 aboutCard.appendChild(aboutTitle);
 aboutCard.appendChild(aboutText);
 aboutCard.addEventListener("click", () => openAboutModal());
@@ -648,6 +657,7 @@ aboutCard.addEventListener("keydown", (e) => {
   if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openAboutModal(); }
 });
 settingsInner.appendChild(aboutCard);
+
 
     
     const card1 = document.createElement("div");
