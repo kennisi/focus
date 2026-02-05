@@ -108,7 +108,8 @@ function ensureModalDom() {
     </div>
   `;
 
-  modal.appendChild(closeDot);
+  mask.appendChild(closeDot);
+  closeDot.id = "aboutCloseDot";
   modal.appendChild(framesStyle);
   modal.appendChild(sc);
   mask.appendChild(modal);
@@ -251,6 +252,14 @@ export async function open() {
 
   const mask = document.getElementById("aboutMask");
   mask.classList.add("is-open");
+
+  const dot = document.getElementById("aboutCloseDot");
+const box = document.getElementById("aboutModal").getBoundingClientRect();
+if (dot && box) {
+  dot.style.top = (box.top - 1) + "px";
+  dot.style.left = (box.left - 1) + "px";
+}
+
 
   initScrollerOnce();
   applyAccentColor();
