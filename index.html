@@ -127,9 +127,70 @@ function startTitleBrailleAnimation({
   const timer = setInterval(tick, intervalMs);
   return () => clearInterval(timer);
 }
-  const stopTitleAnim = startTitleBrailleAnimation({ prefix: "", intervalMs: 150 });
+  
+    
 
+function startBlinkingFavicon(options = {}) {
+  const {
+    emoji = "👀",
+    minInterval = 4000,
+    maxInterval = 6000,
+    blinkDuration = 500
+  } = options;
 
+  let timer = null;
+  let stopped = false;
+
+  let link = document.querySelector("link[rel='icon']");
+  if (!link) {
+    link = document.createElement("link");
+    link.rel = "icon";
+    document.head.appendChild(link);
+  }
+
+  function setFaviconEmoji(e) {
+    if (!e) {
+      link.removeAttribute("href");
+      return;
+    }
+    const svg = `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+        <text y=".9em" font-size="90">${e}</text>
+      </svg>`;
+    link.href = "data:image/svg+xml," + encodeURIComponent(svg);
+  }
+
+  function scheduleNextBlink() {
+    if (stopped) return;
+
+    const delay =
+      Math.random() * (maxInterval - minInterval) + minInterval;
+
+    timer = setTimeout(async () => {
+      setFaviconEmoji(null);           // 闭眼
+      await new Promise(r => setTimeout(r, blinkDuration));
+      setFaviconEmoji(emoji);          // 睁眼
+      scheduleNextBlink();
+    }, delay);
+  }
+
+  // 初始化为睁眼状态
+  setFaviconEmoji(emoji);
+  scheduleNextBlink();
+
+  return {
+    stop() {
+      stopped = true;
+      clearTimeout(timer);
+      timer = null;
+      setFaviconEmoji(emoji);
+    }
+  };
+}
+
+  // ===== 其他 结束 =====
+
+    
   
   function makeDefaultState() {
     const iso = nowISO();
@@ -932,6 +993,9 @@ function startTitleBrailleAnimation({
   renderRhythm();
   renderSettings();
   setInterval(tickUpdate, 1000);
+  startBlinkingFavicon();
+  startTitleBrailleAnimation();
+
     
   })();
 });
