@@ -50,3 +50,13 @@
 /* close dot (scoped, top-left) */
 #aboutModal .card__toggle { position: absolute; top: -1px; left: -1px; width: 20px; height: 20px; border-radius: 999px; box-shadow: 0 6px 14px rgba(0,0,0,0.25); cursor: pointer; user-select: none; touch-action: manipulation; z-index: 5; }
 #aboutModal .card__toggle.is-red { background: var(--red); }
+
+
+/* ===== Fix: modal/card padding + scroller clipping/offset (scoped) ===== */
+#aboutModal.card { padding: 0 !important; box-sizing: border-box; overflow: hidden; background: var(--bg2); }
+
+#aboutModal .scroller { width: 100%; height: 100%; padding: 0 !important; aspect-ratio: auto; resize: none; overflow: hidden; }
+
+#aboutModal .scroller > svg { top: 0 !important; bottom: 0 !important; right: 0 !important; }
+
+#aboutModal .scroller > div { height: 100%; width: 100%; box-sizing: border-box; margin: 0; padding: calc(var(--padding) * 1px) 0; border-radius: calc(var(--radius) * 1px); outline-offset: 0; }
