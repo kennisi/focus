@@ -129,7 +129,7 @@ function startTitleBrailleAnimation({
 }
   
     
-
+// ===== 其他 =====
 function startBlinkingFavicon(options = {}) {
   const {
     emoji = "👀",
@@ -141,41 +141,50 @@ function startBlinkingFavicon(options = {}) {
   let timer = null;
   let stopped = false;
 
-  let link = document.querySelector("link[rel='icon']");
+  // 尽量找标准 favicon；找不到就创建
+  let link =
+    document.querySelector("link[rel='icon']") ||
+    document.querySelector("link[rel='shortcut icon']");
   if (!link) {
     link = document.createElement("link");
     link.rel = "icon";
     document.head.appendChild(link);
+  } else {
+    link.rel = "icon";
   }
 
-  function setFaviconEmoji(e) {
-    if (!e) {
-      link.removeAttribute("href");
-      return;
-    }
-    const svg = `
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-        <text y=".9em" font-size="90">${e}</text>
-      </svg>`;
-    link.href = "data:image/svg+xml," + encodeURIComponent(svg);
+  // 1x1 透明 PNG（闭眼用），比 remove href 更容易触发刷新
+  const BLANK_PNG =
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PkGfVwAAAABJRU5ErkJggg==";
+
+  function makeEmojiDataUrl(e) {
+    const svg =
+      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">` +
+      `<text y=".9em" font-size="90">${e}</text>` +
+      `</svg>`;
+    // 关键：每次加随机参数，避免浏览器认为“同一个图标”而不重绘
+    return "data:image/svg+xml," + encodeURIComponent(svg) + `#v=${Math.random()}`;
+  }
+
+  function setFaviconHref(href) {
+    // 关键：强制更换成“新字符串”
+    link.href = href;
   }
 
   function scheduleNextBlink() {
     if (stopped) return;
-
-    const delay =
-      Math.random() * (maxInterval - minInterval) + minInterval;
+    const delay = Math.random() * (maxInterval - minInterval) + minInterval;
 
     timer = setTimeout(async () => {
-      setFaviconEmoji(null);           // 闭眼
+      setFaviconHref(BLANK_PNG + `#v=${Math.random()}`);  // 闭眼
       await new Promise(r => setTimeout(r, blinkDuration));
-      setFaviconEmoji(emoji);          // 睁眼
+      setFaviconHref(makeEmojiDataUrl(emoji));            // 睁眼
       scheduleNextBlink();
     }, delay);
   }
 
-  // 初始化为睁眼状态
-  setFaviconEmoji(emoji);
+  // 初始化：先显示 👀
+  setFaviconHref(makeEmojiDataUrl(emoji));
   scheduleNextBlink();
 
   return {
@@ -183,10 +192,11 @@ function startBlinkingFavicon(options = {}) {
       stopped = true;
       clearTimeout(timer);
       timer = null;
-      setFaviconEmoji(emoji);
+      setFaviconHref(makeEmojiDataUrl(emoji));
     }
   };
 }
+
 
   // ===== 其他 结束 =====
 
