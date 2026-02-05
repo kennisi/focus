@@ -50,7 +50,7 @@
 #aboutModal .scroller > svg { top: 0 !important; bottom: 0 !important; right: 0 !important; }
 
 /* the only visible “panel” */
-#aboutModal .scroller > div { height: 100%; width: 100%; box-sizing: border-box; margin: 0; padding: calc(var(--padding) * 1px) 0; background: var(--bg2); outline: 1px solid var(--color3); outline-offset: 0; border-radius: calc(var(--radius) * 1px); }
+#aboutModal .scroller > div { height: 100%; width: 100%; box-sizing: border-box; margin: 0; padding: calc(var(--padding) * 1px) 0; background: var(--bg2); outline: none !important; outline-offset: 0; border-radius: calc(var(--radius) * 1px); }
 
 /* close dot on mask layer (never clipped) */
 #aboutCloseDot { position: fixed; width: 20px; height: 20px; border-radius: 999px; box-shadow: 0 6px 14px rgba(0,0,0,0.25); cursor: pointer; user-select: none; touch-action: manipulation; background: var(--red); z-index: 10000; }
