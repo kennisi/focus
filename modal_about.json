@@ -1,18 +1,19 @@
 {
-  "zh-cn111": {
-    "关于": "这是一个外置模块的弹窗，内容来自 modal_about.json。",
-    "滚动条": "滚动条颜色会根据当前时间在橙色/深蓝色之间切换。"
+  "zh-cn": {
+    "专注": "当下，在这个快节奏的时代，我们被眼前的大事小事占据着精力。时间和注意力不再是选择，而是稀缺的资源。拿起手机，人们纷纷患上了ADHD，屏幕前的时光飞速流逝，却很难感知它的存在。focus.afterthe.life 提醒我们，关注过去的时间，找到自己的节奏，抬起头向前看 ",
+    "卡片：编辑": "在主页面，滑到底部，点击edit按钮。在编辑模式中，拖拽来调整前后顺序，或修改卡片的显示和隐藏状态。隐藏的卡片边框显示为灰色虚线，不会常驻在主屏幕中，只有在编辑模式下才可以被看见。",
+    "卡片：自定义": "在主页面，滑到底部，点击add按钮。创建你自己的卡片，添加命名：春季 / 新学期 / 新项目。设置开始和结束日期，每个周期最多365天。自定义的卡片可以被删除，先点击按钮将其移至隐藏状态，随后长按3秒即可移除",
+    "颜色": "卡片中，原点矩阵的颜色会改变。在夜晚按钮是深蓝色，太阳升起后变为橙色。你可以在设置中调整日出/日落时间",
+    "记忆": "你创建的卡片和自定义的设置会记录在你的设备中，关闭页面或是关闭手机都不会影响。但请注意，如果你使用应用内置浏览器，如微信、discord 等软件打开页面，则无法同步。每个应用是独立的，且有时候会自动删除缓存。因此，想要网站记得你，请使用浏览器打开本页。",
+    "联系": "我是 Kenneth，向我分享你的任何想法、建议或是吐槽，请邮件留言 focus@wwr.wiki",
   },
-  "en": {
-    "About": "module",
-    "Scrollbar": "Lorem ipsum dolor sit amet. Ab incidunt optio eum omnis impedit quo accusamus omnis ut minus sapiente aut repellendus quis. In necessitatibus velit ab voluptatem delectus et quae iusto. At fuga cupiditate sed excepturi sunt et necessitatibus magni ut neque possimus in explicabo ipsa.",
-    "Scrollbar1": "Lorem ipsum dolor sit amet. Ab incidunt optio eum omnis impedit quo accusamus omnis ut minus sapiente aut repellendus quis. In necessitatibus velit ab voluptatem delectus et quae iusto. At fuga cupiditate sed excepturi sunt et necessitatibus magni ut neque possimus in explicabo ipsa.",
-    "Scrollbar2": "Lorem ipsum dolor sit amet. Ab incidunt optio eum omnis impedit quo accusamus omnis ut minus sapiente aut repellendus quis. In necessitatibus velit ab voluptatem delectus et quae iusto. At fuga cupiditate sed excepturi sunt et necessitatibus magni ut neque possimus in explicabo ipsa.",
-    "Scrollba3r": "Lorem ipsum dolor sit amet. Ab incidunt optio eum omnis impedit quo accusamus omnis ut minus sapiente aut repellendus quis. In necessitatibus velit ab voluptatem delectus et quae iusto. At fuga cupiditate sed excepturi sunt et necessitatibus magni ut neque possimus in explicabo ipsa.",
-    "Scrollbar34": "Lorem ipsum dolor sit amet. Ab incidunt optio eum omnis impedit quo accusamus omnis ut minus sapiente aut repellendus quis. In necessitatibus velit ab voluptatem delectus et quae iusto. At fuga cupiditate sed excepturi sunt et necessitatibus magni ut neque possimus in explicabo ipsa.",
-    "Scrollba6r4": "Lorem ipsum dolor sit amet. Ab incidunt optio eum omnis impedit quo accusamus omnis ut minus sapiente aut repellendus quis. In necessitatibus velit ab voluptatem delectus et quae iusto. At fuga cupiditate sed excepturi sunt et necessitatibus magni ut neque possimus in explicabo ipsa.",
-    "Scrollba5r": "Lorem ipsum dolor sit amet. Ab incidunt optio eum omnis impedit quo accusamus omnis ut minus sapiente aut repellendus quis. In necessitatibus velit ab voluptatem delectus et quae iusto. At fuga cupiditate sed excepturi sunt et necessitatibus magni ut neque possimus in explicabo ipsa."
-
+  "en-us": {
+    "Focus": "In a fast-paced world, our attention is constantly pulled by big and small things alike. Time and attention are no longer choices, but scarce resources. Once we pick up our phones, many of us slip into a kind of ADHD—hours disappear in front of the screen, yet are barely felt. focus.afterthe.life reminds us to look back at the time that has passed, find our own rhythm, lift our heads, and keep moving forward.",
+    "Cards: Edit": "On the main page, scroll to the bottom and tap the Edit button. In edit mode, you can drag cards to reorder them, or change whether a card is shown or hidden. Hidden cards appear with a gray dashed border and do not stay on the home screen. They are only visible in edit mode.",
+    "Cards: Custom": "On the main page, scroll to the bottom and tap the Add button. Create your own cards and name them—Spring / New Semester / New Project. Set a start and end date, with a maximum length of 365 days per period. Custom cards can be deleted: first move the card to the hidden state, then press and hold for 3 seconds to remove it.",
+    "Color": "The color of the dot matrix on each card changes over time. At night, the button is deep blue; after sunrise, it turns orange. You can adjust sunrise and sunset times in Settings.",
+    "Memory": "Your cards and custom settings are stored locally on your device. Closing the page or your phone will not affect them. However, if you open the site inside in-app browsers such as WeChat or Discord, data cannot be synced. Each app is isolated and may clear its cache automatically. If you want the site to remember you, please open this page in a standard web browser.",
+    "Contact": "I’m Kenneth. If you have any thoughts, suggestions, or complaints, feel free to email me at focus@wwr.wiki"
   }
 }
 
