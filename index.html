@@ -130,21 +130,11 @@ function startTitleBrailleAnimation({
   
     
 // ===== 其他 =====
-function startBlinkingFavicon(options = {}) {
-  const {
-    emoji = "👀",
-    minInterval = 4000,
-    maxInterval = 6000,
-    blinkDuration = 500
-  } = options;
-
-  let timer = null;
-  let stopped = false;
-
-  // 尽量找标准 favicon；找不到就创建
+function setStaticFavicon(emoji = "👀") {
   let link =
     document.querySelector("link[rel='icon']") ||
     document.querySelector("link[rel='shortcut icon']");
+
   if (!link) {
     link = document.createElement("link");
     link.rel = "icon";
@@ -153,50 +143,13 @@ function startBlinkingFavicon(options = {}) {
     link.rel = "icon";
   }
 
-  // 1x1 透明 PNG（闭眼用），比 remove href 更容易触发刷新
-  const BLANK_PNG =
-    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PkGfVwAAAABJRU5ErkJggg==";
+  const svg =
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">` +
+    `<text y=".9em" font-size="90">${emoji}</text>` +
+    `</svg>`;
 
-  function makeEmojiDataUrl(e) {
-    const svg =
-      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">` +
-      `<text y=".9em" font-size="90">${e}</text>` +
-      `</svg>`;
-    // 关键：每次加随机参数，避免浏览器认为“同一个图标”而不重绘
-    return "data:image/svg+xml," + encodeURIComponent(svg) + `#v=${Math.random()}`;
-  }
-
-  function setFaviconHref(href) {
-    // 关键：强制更换成“新字符串”
-    link.href = href;
-  }
-
-  function scheduleNextBlink() {
-    if (stopped) return;
-    const delay = Math.random() * (maxInterval - minInterval) + minInterval;
-
-    timer = setTimeout(async () => {
-      setFaviconHref(BLANK_PNG + `#v=${Math.random()}`);  // 闭眼
-      await new Promise(r => setTimeout(r, blinkDuration));
-      setFaviconHref(makeEmojiDataUrl(emoji));            // 睁眼
-      scheduleNextBlink();
-    }, delay);
-  }
-
-  // 初始化：先显示 👀
-  setFaviconHref(makeEmojiDataUrl(emoji));
-  scheduleNextBlink();
-
-  return {
-    stop() {
-      stopped = true;
-      clearTimeout(timer);
-      timer = null;
-      setFaviconHref(makeEmojiDataUrl(emoji));
-    }
-  };
+  link.href = "data:image/svg+xml," + encodeURIComponent(svg);
 }
-
 
   // ===== 其他 结束 =====
 
@@ -1003,7 +956,7 @@ function startBlinkingFavicon(options = {}) {
   renderRhythm();
   renderSettings();
   setInterval(tickUpdate, 1000);
-  startBlinkingFavicon();
+  setStaticFavicon("👀");
   startTitleBrailleAnimation();
 
     
