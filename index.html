@@ -82,7 +82,8 @@ textarea.u-input { width: 100%; min-height: 110px; resize: vertical; border: 1px
   </style>
 </head>
   <script>
-(() => {
+document.addEventListener("DOMContentLoaded", () => {
+  (() => {
   const STORAGE_KEY = "rhythm_state_v1";
   const EXPORT_PREFIX = "RHYTHM|crc32=";
 /* 
@@ -931,7 +932,9 @@ function startTitleBrailleAnimation({
   renderRhythm();
   renderSettings();
   setInterval(tickUpdate, 1000);
-})();
+    
+  })();
+});
 </script>
 
 <body>
