@@ -57,6 +57,6 @@
 #aboutMask.is-open #aboutCloseDot { top: 12px; left: 12px; }
 
 
-#aboutModal #aboutContent h2 { margin-top: 24px; }
-#aboutModal #aboutContent p { margin-top: 8px; }
+#aboutModal #aboutContent h2 { margin-top: 24px; font-size: 16px; }
+#aboutModal #aboutContent p { margin-top: 8px; color: var(--color2); }
 #aboutModal #aboutContent h2:first-child { margin-top: 0; }
