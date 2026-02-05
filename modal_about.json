@@ -1,1 +1,18 @@
+{
+  "zh-cn111": {
+    "关于": "这是一个外置模块的弹窗，内容来自 modal_about.json。",
+    "滚动条": "滚动条颜色会根据当前时间在橙色/深蓝色之间切换。"
+  },
+  "en": {
+    "About": "module",
+    "Scrollbar": "Lorem ipsum dolor sit amet. Ab incidunt optio eum omnis impedit quo accusamus omnis ut minus sapiente aut repellendus quis. In necessitatibus velit ab voluptatem delectus et quae iusto. At fuga cupiditate sed excepturi sunt et necessitatibus magni ut neque possimus in explicabo ipsa.",
+    "Scrollbar": "Lorem ipsum dolor sit amet. Ab incidunt optio eum omnis impedit quo accusamus omnis ut minus sapiente aut repellendus quis. In necessitatibus velit ab voluptatem delectus et quae iusto. At fuga cupiditate sed excepturi sunt et necessitatibus magni ut neque possimus in explicabo ipsa.",
+    "Scrollbar": "Lorem ipsum dolor sit amet. Ab incidunt optio eum omnis impedit quo accusamus omnis ut minus sapiente aut repellendus quis. In necessitatibus velit ab voluptatem delectus et quae iusto. At fuga cupiditate sed excepturi sunt et necessitatibus magni ut neque possimus in explicabo ipsa.",
+    "Scrollbar": "Lorem ipsum dolor sit amet. Ab incidunt optio eum omnis impedit quo accusamus omnis ut minus sapiente aut repellendus quis. In necessitatibus velit ab voluptatem delectus et quae iusto. At fuga cupiditate sed excepturi sunt et necessitatibus magni ut neque possimus in explicabo ipsa.",
+    "Scrollbar": "Lorem ipsum dolor sit amet. Ab incidunt optio eum omnis impedit quo accusamus omnis ut minus sapiente aut repellendus quis. In necessitatibus velit ab voluptatem delectus et quae iusto. At fuga cupiditate sed excepturi sunt et necessitatibus magni ut neque possimus in explicabo ipsa.",
+    "Scrollbar": "Lorem ipsum dolor sit amet. Ab incidunt optio eum omnis impedit quo accusamus omnis ut minus sapiente aut repellendus quis. In necessitatibus velit ab voluptatem delectus et quae iusto. At fuga cupiditate sed excepturi sunt et necessitatibus magni ut neque possimus in explicabo ipsa.",
+    "Scrollbar": "Lorem ipsum dolor sit amet. Ab incidunt optio eum omnis impedit quo accusamus omnis ut minus sapiente aut repellendus quis. In necessitatibus velit ab voluptatem delectus et quae iusto. At fuga cupiditate sed excepturi sunt et necessitatibus magni ut neque possimus in explicabo ipsa."
+
+  }
+}
 
