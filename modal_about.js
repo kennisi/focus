@@ -141,17 +141,22 @@
     // Link DOM refs
     list = scroller.querySelector("div"); // first inner div is the scroll container
 
-    // Init once
-    initScroller();
   }
 
-  function open() {
-    ensureDom();
-    overlay.classList.add("is-open");
-    document.body.style.overflow = "hidden";
-    refreshColorLoop();
-    loadAndRenderJson();
-  }
+async function open() {
+  ensureDom();
+  overlay.classList.add("is-open");
+  document.body.style.overflow = "hidden";
+
+  // 现在弹窗可见了，初始化才有意义
+  initScroller();
+  refreshColorLoop();
+
+  // 渲染内容会改变 scrollHeight，渲染后必须再算一次
+  await loadAndRenderJson();
+  relayoutScroller();
+}
+
 
   function close() {
     if (!overlay) return;
@@ -194,6 +199,7 @@
       main.appendChild(h2);
       main.appendChild(p);
     }
+    relayoutScroller();
   }
 
   function refreshColorLoop() {
@@ -286,6 +292,19 @@
     configureFallback();
   }
 
+  function relayoutScroller() {
+  if (!scroller || !list) return;
+  // 强制在可见布局完成后再测量（两帧更稳）
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      syncBar({ target: scroller });
+      configureFallback();
+    });
+  });
+}
+
+
+  
   function ensureGsap(cb) {
     if (window.gsap && window.ScrollTrigger) { cb(); return; }
     const a = document.createElement("script");
