@@ -5,47 +5,962 @@
   <title>Placeholder</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      background: #0f0f0f;
-      color: #e5e5e5;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
-    body {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .hint {
-      font-size: 14px;
-      opacity: 0.6;
-      letter-spacing: 0.08em;
-    }
+/* ===== Theme Variables (set by JS) ===== */
+:root { --orange: #ff8a00; --navy: #0b3d91; --red: #ff3b30; --green: #34c759; --dot: 10px; --radius: 18px; --cardPad: 20px; --gap: 14px; --maxCard: 350px; --shadow: 0 10px 22px rgba(0,0,0,0.08); }
+
+/* ===== Base ===== */
+html, body { height: 100%; }
+body { margin: 0; background: var(--bg1); color: var(--color1); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "PingFang SC", "Microsoft YaHei", sans-serif; }
+h2, h3, p { margin: 0; }
+main { padding: 64px 20px 20px 20px; }
+/* ===== Sticky Tabs ===== */
+.header { position: sticky; top: 0; z-index: 50; padding: 10px 0; }
+.tabs { display: flex; justify-content: center; align-items: center; gap: 22px; }
+.tab-btn { background: transparent; border: none; padding: 8px 2px; color: var(--color1); cursor: pointer; font: inherit; letter-spacing: 0.2px; }
+.tab-btn.is-active { border-bottom: 2px solid var(--color1); }
+.tab-btn.is-shake { animation: tabShake 180ms linear 1; }
+@keyframes tabShake { 0% { transform: translateX(0); } 25% { transform: translateX(-4px); } 50% { transform: translateX(4px); } 75% { transform: translateX(-3px); } 100% { transform: translateX(0); } }
+/* ===== Layout Containers ===== */
+.section { display: none; }
+.section.is-active { display: block; }
+.wrap { width: 100%; display: flex; justify-content: center; }
+.grid { width: 100%; max-width: 1920px; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, var(--maxCard))); justify-content: center; gap: var(--gap); }
+/* ===== Card ===== */
+.card { position: relative; width: 100%; max-width: var(--maxCard); background: var(--bg2); border-radius: var(--radius);  padding: var(--cardPad); box-sizing: border-box; transform-origin: center; transition: transform 180ms ease, opacity 180ms ease; }
+.card.is-hiddenStyle { border: 5px dashed var(--color3); box-shadow: none; }
+.card.is-hiding { transform: scale(0.92); opacity: 0.35; }
+.card.is-showing { animation: popIn 160ms ease 1; }
+@keyframes popIn { 0% { transform: scale(1); } 50% { transform: scale(1.04); } 100% { transform: scale(1); } }
+/* no “visual subcontainers”: only layout rules below */
+.card__head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.card__title { font-size: 18px; font-weight: 650; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 62%; }
+.card__info { font-size: 13px; color: var(--color2); line-height: 1.1; white-space: nowrap; }
+.card__infoBtn { background: transparent; border: none; padding: 0; margin-left: 10px; font: inherit; cursor: pointer; color: var(--color2); }
+.card__infoBtn.is-selected { color: var(--color1); border-bottom: 2px solid var(--color1); padding-bottom: 2px; }
+.dots { width: 100%; aspect-ratio: 1 / 1; display: grid; grid-template-columns: repeat(var(--cols), var(--dot)); grid-auto-rows: var(--dot); place-content: space-between; justify-items: center; align-items: center; margin-top: 12px; }
+
+
+.dot { width: var(--dot); height: var(--dot); border-radius: 999px; background: var(--color3); }
+.dot.is-done { background: var(--color1); }
+.dot.is-now { background: var(--nowColor); }
+/* ===== Edit / Toggle Dots ===== */
+body.is-editing { outline: none; }
+body.is-editing::before { content: ""; position: fixed; inset: 0; border: 15px solid var(--color3); pointer-events: none; z-index: 9999; box-sizing: border-box; }
+
+.card__toggle { position: absolute; top: -1px; right: -1px; width: 20px; height: 20px; border-radius: 999px; box-shadow: 0 6px 14px rgba(0,0,0,0.25); cursor: pointer; user-select: none; touch-action: manipulation; }
+.card__toggle.is-red { background: var(--red); }
+.card__toggle.is-green { background: var(--green); }
+.card__toggle.is-armedDelete { animation: growRed 3s linear 1 forwards; }
+@keyframes growRed { 0% { transform: scale(1); background: var(--green); } 30% { background: var(--red); } 100% { transform: scale(1.6); background: var(--red); } }
+/* ===== Bottom Actions ===== */
+.bottomActions { margin-top: 18px; display: flex; justify-content: center; gap: 22px; }
+.textBtn { background: transparent; border: none; padding: 8px 2px; cursor: pointer; color: var(--color1); font: inherit; }
+.textBtn.is-shake { animation: tabShake 180ms linear 1; }
+/* ===== Inputs (global unified style) ===== */
+.u-input { background: transparent; border: none; border-bottom: 1px dashed var(--color3); color: var(--color1); font: inherit; padding: 2px 0; outline: none; }
+.u-input::placeholder { color: var(--color2); }
+.u-input.is-narrow { width: 25px; }
+.u-input.is-year { width: 40px; }
+.u-input.is-title { width: 180px; max-width: 180px; }
+textarea.u-input { width: 100%; min-height: 110px; resize: vertical; border: 1px dashed var(--color3); padding: 10px; box-sizing: border-box; }
+/* ===== Settings ===== */
+.settingsWrap { width: 100%; display: flex; justify-content: center; }
+.settingsInner { width: 100%; max-width: 860px; display: flex; flex-direction: column; align-items: center; gap: var(--gap); }
+.settingsInner .card { width: 100%; }
+
+.dataBtns { display: flex; justify-content: center; gap: 14px; margin-top: 12px; }
+.dataBtn { background: transparent; border: 1px solid var(--color3); border-radius: 14px; padding: 10px 14px; cursor: pointer; color: var(--color1); font: inherit; }
+.dataBtn.is-armed { animation: tabShake 180ms linear infinite; }
+.note { margin-top: 10px; font-size: 13px; color: var(--color2); line-height: 1.4; }
+/* ===== Responsive ===== */
+@media (max-width: 520px) {
+  .grid { grid-template-columns: 1fr; }
+  .card { max-width: 100%; }
+  .card__title { max-width: 58%; }
+  .u-input.is-title { width: 150px; max-width: 150px; }
+}
   </style>
 </head>
   <script>
-  // 14-frame braille title animation (loop)
-  const frames = ["⠉⠉⠀","⠈⠉⠁","⠀⠉⠉","⠀⠈⠙","⠀⠀⠹","⠀⠀⠼","⠀⠠⠴","⠀⠤⠤","⠠⠤⠄","⠤⠤⠀","⠦⠄⠀","⠧⠀⠀","⠏⠀⠀","⠋⠁⠀","⠉⠉⠀"]
-.map(s => s.replace(/\s+$/g, "")); // trim trailing spaces (optional)
+(() => {
+  const STORAGE_KEY = "rhythm_state_v1";
+  const EXPORT_PREFIX = "RHYTHM|crc32=";
+/* 
+bg1:"#背景", bg2:"#卡片", bg3:"#dddddd", 
+color1:"#实点，卡片标题文字", color2:"#卡片信息文字", color3:"#虚点，编辑模式外边框，编辑模式，卡片，边框" 
+*/
+  const THEMES = {
+    light: { bg1:"#f2f2f2", bg2:"#e8e8e8", bg3:"#dddddd", color1:"#111111", color2:"#555", color3:"#bfbfbf" },
+    dark:  { bg1:"#0f0f0f", bg2:"#1a1a1a", bg3:"#242424", color1:"#ddd", color2:"#6f6f6f", color3:"#3a3a3a" },
+  };
 
-  const prefix = "";          // 你想加前缀可写这里，比如 "focus "
-  const intervalMs = 150;  
+  const DEFAULT_ORDER = ["y--w--dt","m--s--dt"];
+  const DEFAULT_HIDDEN = ["h--m--dt","d--h--dt","w--h--dt","mo--d--dt","y--d--dt","c--w--dt--c-20260112_20260510","y--w--dt"];
+  const DEFAULT_TITLES = { "c--w--dt--c-20260112_20260510": "My Project" };
+
+  const ui = { tab: "rhythm", editing: false, importArmed: false, sortable: null, importText: "" };
+  let state = null;
+
+  const el = (id) => document.getElementById(id);
+  const cardsGrid = el("cardsGrid");
+  const settingsInner = el("settingsInner");
+
+  function nowISO() { return new Date().toISOString(); }
+
+  function safeParse(json) { try { return JSON.parse(json); } catch { return null; } }
+
+
+
+  // ===== 其他 =====
+function startTitleBrailleAnimation({
+  frames = ["⠉⠉⠀","⠈⠉⠁","⠀⠉⠉","⠀⠈⠙","⠀⠀⠹","⠀⠀⠼","⠀⠠⠴","⠀⠤⠤","⠠⠤⠄","⠤⠤⠀","⠦⠄⠀","⠧⠀⠀","⠏⠀⠀","⠋⠁⠀","⠉⠉⠀"].map(s => s.replace(/\s+$/g, "")),
+  prefix = "",
+  intervalMs = 150,
+} = {}) {
   let i = 0;
-
-  function tick() {
+  const tick = () => {
     document.title = prefix + frames[i];
     i = (i + 1) % frames.length;
+  };
+  tick();
+  const timer = setInterval(tick, intervalMs);
+  return () => clearInterval(timer);
+}
+  const stopTitleAnim = startTitleBrailleAnimation({ prefix: "", intervalMs: 150 });
+
+
+  
+  function makeDefaultState() {
+    const iso = nowISO();
+    return {
+      meta: { schema: "v1", createdAt: iso, updatedAt: iso },
+      prefs: { theme: "light", clock: "24h", dayNight: ["07:00","17:00"] },
+      cards: { order: [...DEFAULT_ORDER], hidden: [...DEFAULT_HIDDEN], titles: { ...DEFAULT_TITLES } }
+    };
   }
 
-  tick();
-  setInterval(tick, intervalMs);
+  function normalizeState(s) {
+    if (!s || !s.meta || !s.prefs || !s.cards) return makeDefaultState();
+    if (!s.meta.schema) s.meta.schema = "v1";
+    if (!s.meta.createdAt) s.meta.createdAt = nowISO();
+    if (!s.meta.updatedAt) s.meta.updatedAt = nowISO();
+    if (!s.prefs.theme) s.prefs.theme = "light";
+    if (!s.prefs.clock) s.prefs.clock = "24h";
+    if (!Array.isArray(s.prefs.dayNight) || s.prefs.dayNight.length !== 2) s.prefs.dayNight = ["07:00","17:00"];
+    if (!Array.isArray(s.cards.order)) s.cards.order = [...DEFAULT_ORDER];
+    if (!Array.isArray(s.cards.hidden)) s.cards.hidden = [];
+    if (!s.cards.titles || typeof s.cards.titles !== "object") s.cards.titles = {};
+    for (const id of DEFAULT_ORDER) if (!s.cards.order.includes(id)) s.cards.order.push(id);
+    return s;
+  }
+
+  function loadState() {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    const parsed = raw ? safeParse(raw) : null;
+    state = normalizeState(parsed);
+    applyTheme(state.prefs.theme);
+  }
+
+  function saveState() {
+    state.meta.updatedAt = nowISO();
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  function applyTheme(name) {
+    const t = THEMES[name] || THEMES.light;
+    const r = document.documentElement.style;
+    r.setProperty("--bg1", t.bg1);
+    r.setProperty("--bg2", t.bg2);
+    r.setProperty("--bg3", t.bg3);
+    r.setProperty("--color1", t.color1);
+    r.setProperty("--color2", t.color2);
+    r.setProperty("--color3", t.color3);
+  }
+
+  function tabShake(btn) {
+    btn.classList.remove("is-shake");
+    void btn.offsetWidth;
+    btn.classList.add("is-shake");
+    setTimeout(() => btn.classList.remove("is-shake"), 220);
+  }
+
+  function setTab(name) {
+    ui.tab = name;
+    el("tab-rhythm").classList.toggle("is-active", name === "rhythm");
+    el("tab-settings").classList.toggle("is-active", name === "settings");
+    el("section-rhythm").classList.toggle("is-active", name === "rhythm");
+    el("section-settings").classList.toggle("is-active", name === "settings");
+    if (name === "rhythm") renderRhythm();
+    if (name === "settings") renderSettings();
+  }
+
+  function setEditing(on) {
+    ui.editing = on;
+    document.body.classList.toggle("is-editing", on);
+    if (on) window.scrollTo({ top: 0, behavior: "smooth" });
+    renderRhythm();
+  }
+
+  function clampInt(n, a, b) { return Math.max(a, Math.min(b, n)); }
+
+  function onlyDigits(v) { return (v || "").replace(/[^\d]/g, ""); }
+
+  function parseHHMM(hhmm) {
+    const m = /^(\d{2}):(\d{2})$/.exec(hhmm || "");
+    if (!m) return null;
+    const hh = clampInt(parseInt(m[1], 10), 0, 23);
+    const mm = clampInt(parseInt(m[2], 10), 0, 59);
+    return hh * 60 + mm;
+  }
+
+  function minutesToHHMM(totalMin) {
+    const hh = String(Math.floor(totalMin / 60)).padStart(2, "0");
+    const mm = String(totalMin % 60).padStart(2, "0");
+    return `${hh}:${mm}`;
+  }
+
+  function isDayNow(d) {
+    const dn = state.prefs.dayNight || ["07:00","17:00"];
+    const a = parseHHMM(dn[0]); const b = parseHHMM(dn[1]);
+    if (a == null || b == null) return true;
+    const cur = d.getHours() * 60 + d.getMinutes();
+    return cur >= a && cur < b;
+  }
+
+  function formatTime(d) {
+    const h = d.getHours();
+    const m = String(d.getMinutes()).padStart(2, "0");
+    if (state.prefs.clock === "12h") {
+      let hh = h % 12; if (hh === 0) hh = 12;
+      return `${hh} : ${m}`;
+    }
+    return `${h} : ${m}`;
+  }
+
+  function weekdayName(d) {
+    return new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(d);
+  }
+
+  function monthTitle(d) {
+    const mon = new Intl.DateTimeFormat("en-US", { month: "long" }).format(d);
+    return `${mon} ${d.getDate()}`;
+  }
+
+  function dayOfYear(d) {
+    const start = new Date(d.getFullYear(), 0, 1);
+    const diff = d - start;
+    return Math.floor(diff / 86400000);
+  }
+
+  function daysInYear(y) {
+    const a = new Date(y, 0, 1);
+    const b = new Date(y + 1, 0, 1);
+    return Math.round((b - a) / 86400000);
+  }
+
+  function daysInMonth(y, m) {
+    return new Date(y, m + 1, 0).getDate();
+  }
+
+  function isoMondayIndex(d) {
+    const js = d.getDay(); // 0 Sun .. 6 Sat
+    return (js + 6) % 7; // 0 Mon .. 6 Sun
+  }
+
+  function parseCustomId(id) {
+    const m = /^c--([wd])--dt--c-(\d{8})_(\d{8})$/.exec(id);
+    if (!m) return null;
+    const unit = m[1] === "w" ? "weeks" : "days";
+    const a = m[2]; const b = m[3];
+    const y1 = parseInt(a.slice(0,4),10), mo1 = parseInt(a.slice(4,6),10)-1, d1 = parseInt(a.slice(6,8),10);
+    const y2 = parseInt(b.slice(0,4),10), mo2 = parseInt(b.slice(4,6),10)-1, d2 = parseInt(b.slice(6,8),10);
+    const begin = new Date(y1, mo1, d1);
+    const end = new Date(y2, mo2, d2);
+    begin.setHours(0,0,0,0);
+    end.setHours(0,0,0,0);
+    return { unit, begin, end };
+  }
+
+  function buildCustomId(unit, begin, end) {
+    const u = unit === "weeks" ? "w" : "d";
+    const a = `${begin.getFullYear()}${String(begin.getMonth()+1).padStart(2,"0")}${String(begin.getDate()).padStart(2,"0")}`;
+    const b = `${end.getFullYear()}${String(end.getMonth()+1).padStart(2,"0")}${String(end.getDate()).padStart(2,"0")}`;
+    return `c--${u}--dt--c-${a}_${b}`;
+  }
+
+  function dateDiffDays(a, b) {
+    const aa = new Date(a.getFullYear(), a.getMonth(), a.getDate());
+    const bb = new Date(b.getFullYear(), b.getMonth(), b.getDate());
+    return Math.round((bb - aa) / 86400000);
+  }
+
+  function computeCardSpec(id, now) {
+    const day = isDayNow(now);
+    const nowColor = day ? "var(--orange)" : "var(--navy)";
+
+    if (id === "m--s--dt") {
+      const idx = now.getSeconds();
+      return { id, kind: "minute", cols: 8, total: 60, nowIndex: idx, doneCount: idx, title: String(idx + 1), info: `${idx + 1} / 60 s`, nowColor };
+    }
+    if (id === "h--m--dt") {
+      const idx = now.getMinutes();
+      return { id, kind: "hour", cols: 8, total: 60, nowIndex: idx, doneCount: idx, title: formatTime(now), info: `${idx + 1} / 60 min`, nowColor };
+    }
+    if (id === "d--h--dt") {
+      const idx = now.getHours();
+      return { id, kind: "day", cols: 5, total: 24, nowIndex: idx, doneCount: idx, title: formatTime(now), info: `${idx + 1} / 24 H`, nowColor };
+    }
+    if (id === "w--h--dt") {
+      const idx = isoMondayIndex(now) * 24 + now.getHours();
+      return { id, kind: "week", cols: 12, total: 168, nowIndex: idx, doneCount: idx, title: weekdayName(now), info: `${idx + 1} / 168 H`, nowColor };
+    }
+    if (id === "mo--d--dt") {
+      const y = now.getFullYear(), m = now.getMonth();
+      const total = daysInMonth(y, m);
+      const idx = now.getDate() - 1;
+      return { id, kind: "month", cols: 5, total, nowIndex: idx, doneCount: idx, title: monthTitle(now), info: `${idx + 1} / ${total} days`, nowColor };
+    }
+    if (id === "y--w--dt") {
+      const idx = Math.min(51, Math.floor(dayOfYear(now) / 7));
+      return { id, kind: "yearWeeks", cols: 7, total: 52, nowIndex: idx, doneCount: idx, title: String(now.getFullYear()), info: `${idx + 1} / 52 weeks`, nowColor };
+    }
+    if (id === "y--d--dt") {
+      const y = now.getFullYear();
+      const total = daysInYear(y);
+      const idx = dayOfYear(now);
+      return { id, kind: "yearDays", cols: 21, total, nowIndex: idx, doneCount: idx, title: String(y), info: `${idx + 1} / ${total} days`, nowColor };
+    }
+
+    const c = parseCustomId(id);
+    if (c) {
+      const totalDays = dateDiffDays(c.begin, c.end) + 1;
+      const total = c.unit === "weeks" ? Math.max(1, Math.ceil(totalDays / 7)) : Math.max(1, totalDays);
+      const cols = Math.max(3, Math.round(Math.sqrt(total)));
+      const title = state.cards.titles[id] || "Custom";
+      let doneCount = 0;
+      let nowIndex = null;
+
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      if (today < c.begin) {
+        doneCount = 0; nowIndex = null;
+      } else if (today > c.end) {
+        doneCount = total; nowIndex = null;
+      } else {
+        const passedDays = dateDiffDays(c.begin, today);
+        if (c.unit === "weeks") {
+          const passedWeeks = Math.floor(passedDays / 7);
+          doneCount = passedWeeks;
+          nowIndex = passedWeeks;
+        } else {
+          doneCount = passedDays;
+          nowIndex = passedDays;
+        }
+      }
+
+      const x = nowIndex == null ? doneCount : (nowIndex + 1);
+      const unitLabel = c.unit === "weeks" ? "weeks" : "days";
+      return { id, kind: "custom", cols, total, nowIndex, doneCount, title, info: `${x} / ${total} ${unitLabel}`, nowColor, custom: c };
+    }
+
+    return { id, kind: "unknown", cols: 8, total: 1, nowIndex: 0, doneCount: 0, title: id, info: "", nowColor };
+  }
+
+  function ensureDots(cardEl, spec) {
+    const dotsEl = cardEl.querySelector(".dots");
+    const existing = parseInt(dotsEl.getAttribute("data-total") || "0", 10);
+    if (existing !== spec.total) {
+      dotsEl.innerHTML = "";
+      for (let i = 0; i < spec.total; i++) {
+        const d = document.createElement("div");
+        d.className = "dot";
+        dotsEl.appendChild(d);
+      }
+      dotsEl.setAttribute("data-total", String(spec.total));
+    }
+  }
+
+  function updateDots(cardEl, spec) {
+    cardEl.style.setProperty("--nowColor", spec.nowColor);
+    cardEl.querySelector(".dots").style.setProperty("--cols", spec.cols);
+    ensureDots(cardEl, spec);
+
+    const dots = cardEl.querySelectorAll(".dot");
+    for (let i = 0; i < dots.length; i++) {
+      const dot = dots[i];
+      dot.classList.toggle("is-done", i < spec.doneCount);
+      dot.classList.toggle("is-now", spec.nowIndex != null && i === spec.nowIndex);
+      if (spec.nowIndex != null && i === spec.nowIndex) dot.classList.remove("is-done");
+    }
+
+    // dynamic gap so the square looks evenly distributed
+    const dotsEl = cardEl.querySelector(".dots");
+    const size = dotsEl.getBoundingClientRect().width;
+    const dotSize = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--dot")) || 10;
+    const cols = spec.cols;
+    const free = Math.max(0, size - cols * dotSize);
+  }
+
+  function renderCard(id, mode, isHidden) {
+    const now = new Date();
+    const spec = computeCardSpec(id, now);
+
+    const card = document.createElement("div");
+    card.className = "card";
+    card.setAttribute("data-id", id);
+    card.setAttribute("data-kind", spec.kind);
+
+    if (ui.editing && isHidden) card.classList.add("is-hiddenStyle");
+
+    const head = document.createElement("div");
+    head.className = "card__head";
+
+    const left = document.createElement("h2");
+    left.className = "card__title";
+
+    const right = document.createElement("p");
+    right.className = "card__info";
+
+    // title / info (custom differs in edit mode)
+    if (spec.kind === "custom" && ui.editing) {
+      const t = document.createElement("input");
+      t.className = "u-input is-title is-titleInput";
+      t.value = state.cards.titles[id] || "";
+      t.maxLength = 20;
+      t.placeholder = "Title";
+      t.addEventListener("input", (e) => {
+        e.target.value = e.target.value.slice(0, 20);
+        state.cards.titles[id] = e.target.value;
+        saveState();
+      });
+      left.textContent = "";
+      left.appendChild(t);
+
+      const unitWeeks = document.createElement("button");
+      unitWeeks.className = "card__infoBtn";
+      unitWeeks.textContent = "weeks";
+      const unitDays = document.createElement("button");
+      unitDays.className = "card__infoBtn";
+      unitDays.textContent = "days";
+
+      const currentUnit = parseCustomId(id)?.unit || "weeks";
+      unitWeeks.classList.toggle("is-selected", currentUnit === "weeks");
+      unitDays.classList.toggle("is-selected", currentUnit === "days");
+
+      unitWeeks.addEventListener("click", () => switchCustomUnit(id, "weeks"));
+      unitDays.addEventListener("click", () => switchCustomUnit(id, "days"));
+
+      right.textContent = "";
+      right.appendChild(unitWeeks);
+      right.appendChild(unitDays);
+    } else {
+      left.textContent = spec.title;
+      right.textContent = spec.info;
+    }
+
+    head.appendChild(left);
+    head.appendChild(right);
+
+    const dots = document.createElement("div");
+    dots.className = "dots";
+
+    card.appendChild(head);
+    card.appendChild(dots);
+
+    if (ui.editing) {
+      const toggle = document.createElement("div");
+      toggle.className = "card__toggle " + (isHidden ? "is-green" : "is-red");
+      card.appendChild(toggle);
+
+      toggle.addEventListener("click", () => {
+        if (isHidden) showCard(id, card);
+        else hideCard(id, card);
+      });
+
+      // long press delete only for hidden custom cards
+      if (isHidden && /^c--/.test(id)) {
+        let timer = null;
+        toggle.addEventListener("pointerdown", () => {
+          toggle.classList.add("is-armedDelete");
+          timer = setTimeout(() => {
+            deleteCustomCard(id);
+          }, 3000);
+        });
+        const cancel = () => {
+          if (timer) clearTimeout(timer);
+          timer = null;
+          toggle.classList.remove("is-armedDelete");
+        };
+        toggle.addEventListener("pointerup", cancel);
+        toggle.addEventListener("pointerleave", cancel);
+        toggle.addEventListener("pointercancel", cancel);
+      }
+
+      // custom date inputs in edit mode
+      if (/^c--/.test(id)) {
+        const c = parseCustomId(id);
+        if (c) {
+          const beginLine = document.createElement("p");
+          beginLine.className = "note";
+          beginLine.textContent = "Begin: ";
+          const endLine = document.createElement("p");
+          endLine.className = "note";
+          endLine.textContent = "End: ";
+
+          const beginY = mkNumInput(String(c.begin.getFullYear()), 4, "is-year");
+          const beginM = mkNumInput(String(c.begin.getMonth()+1).padStart(2,"0"), 2, "is-narrow");
+          const beginD = mkNumInput(String(c.begin.getDate()).padStart(2,"0"), 2, "is-narrow");
+
+          const endY = mkNumInput(String(c.end.getFullYear()), 4, "is-year");
+          const endM = mkNumInput(String(c.end.getMonth()+1).padStart(2,"0"), 2, "is-narrow");
+          const endD = mkNumInput(String(c.end.getDate()).padStart(2,"0"), 2, "is-narrow");
+
+          const bSpan = document.createElement("span");
+          bSpan.append("year "); bSpan.appendChild(beginY); bSpan.append(" month "); bSpan.appendChild(beginM); bSpan.append(" day "); bSpan.appendChild(beginD);
+          const eSpan = document.createElement("span");
+          eSpan.append("year "); eSpan.appendChild(endY); eSpan.append(" month "); eSpan.appendChild(endM); eSpan.append(" day "); eSpan.appendChild(endD);
+
+          beginLine.appendChild(bSpan);
+          endLine.appendChild(eSpan);
+
+          const commit = () => {
+            const ny = parseInt(beginY.value || "0", 10);
+            const nm = parseInt(beginM.value || "1", 10);
+            const nd = parseInt(beginD.value || "1", 10);
+            const ey = parseInt(endY.value || "0", 10);
+            const em = parseInt(endM.value || "1", 10);
+            const ed = parseInt(endD.value || "1", 10);
+
+            const nb = new Date(ny, clampInt(nm,1,12)-1, clampInt(nd,1,31));
+            const ne = new Date(ey, clampInt(em,1,12)-1, clampInt(ed,1,31));
+            nb.setHours(0,0,0,0); ne.setHours(0,0,0,0);
+
+            const spanDays = dateDiffDays(nb, ne) + 1;
+            if (spanDays > 365) { alert("最大周期是365天"); return; }
+            if (spanDays < 1) return;
+
+            const unit = parseCustomId(id)?.unit || "weeks";
+            const newId = buildCustomId(unit, nb, ne);
+            if (newId !== id) renameCardId(id, newId);
+          };
+
+          [beginY,beginM,beginD,endY,endM,endD].forEach(inp => inp.addEventListener("blur", commit));
+          card.appendChild(beginLine);
+          card.appendChild(endLine);
+        }
+      }
+    }
+
+    updateDots(card, spec);
+    return card;
+  }
+
+  function mkNumInput(val, maxLen, extraClass) {
+    const i = document.createElement("input");
+    i.className = "u-input " + (extraClass || "");
+    i.value = val;
+    i.maxLength = maxLen;
+    i.inputMode = "numeric";
+    i.addEventListener("input", (e) => {
+      e.target.value = onlyDigits(e.target.value).slice(0, maxLen);
+    });
+    return i;
+  }
+
+  function renderRhythm() {
+    cardsGrid.innerHTML = "";
+
+    const order = [...state.cards.order];
+    const hidden = new Set(state.cards.hidden);
+
+    const visibleIds = order.filter(id => !hidden.has(id));
+    const hiddenIds = order.filter(id => hidden.has(id));
+    const idsToShow = ui.editing ? [...visibleIds, ...hiddenIds] : visibleIds;
+
+    for (const id of idsToShow) {
+      const card = renderCard(id, ui.editing ? "edit" : "normal", hidden.has(id));
+      cardsGrid.appendChild(card);
+    }
+
+    setupSortable();
+  }
+
+  function renderSettings() {
+    settingsInner.innerHTML = "";
+
+    const card1 = document.createElement("div");
+    card1.className = "card";
+    const h = document.createElement("h2");
+    h.className = "card__title";
+    h.textContent = "Personalization";
+    const p1 = document.createElement("p");
+    p1.className = "note";
+    p1.textContent = "Theme: ";
+    const lightBtn = mkSelectBtn("Light", state.prefs.theme === "light", () => { state.prefs.theme = "light"; applyTheme("light"); saveState(); renderSettings(); });
+    const darkBtn = mkSelectBtn("Dark", state.prefs.theme === "dark", () => { state.prefs.theme = "dark"; applyTheme("dark"); saveState(); renderSettings(); });
+    p1.appendChild(lightBtn); p1.append(" "); p1.appendChild(darkBtn);
+
+    const p2 = document.createElement("p");
+    p2.className = "note";
+    p2.textContent = "Clock: ";
+    const b12 = mkSelectBtn("12-hour", state.prefs.clock === "12h", () => { state.prefs.clock = "12h"; saveState(); renderSettings(); });
+    const b24 = mkSelectBtn("24-hour", state.prefs.clock === "24h", () => { state.prefs.clock = "24h"; saveState(); renderSettings(); });
+    p2.appendChild(b12); p2.append(" "); p2.appendChild(b24);
+
+    const p3 = document.createElement("p");
+    p3.className = "note";
+    p3.textContent = "Sunrise: ";
+    const sr = state.prefs.dayNight[0] || "07:00";
+    const srH = mkNumInput(sr.slice(0,2), 2, "is-narrow");
+    const srM = mkNumInput(sr.slice(3,5), 2, "is-narrow");
+    p3.appendChild(srH); p3.append(" : "); p3.appendChild(srM); p3.append(" am");
+
+    const p4 = document.createElement("p");
+    p4.className = "note";
+    p4.textContent = "Sunset: ";
+    const ss = state.prefs.dayNight[1] || "17:00";
+    const ssH = mkNumInput(String(((parseInt(ss.slice(0,2),10)+11)%12)+1).padStart(2,"0"), 2, "is-narrow");
+    const ssM = mkNumInput(ss.slice(3,5), 2, "is-narrow");
+    p4.appendChild(ssH); p4.append(" : "); p4.appendChild(ssM); p4.append(" pm");
+
+    const commitDayNight = () => {
+      const aH = clampInt(parseInt(srH.value || "7",10), 1, 12);
+      const aM = clampInt(parseInt(srM.value || "0",10), 0, 59);
+      const pH = clampInt(parseInt(ssH.value || "5",10), 1, 12);
+      const pM = clampInt(parseInt(ssM.value || "0",10), 0, 59);
+
+      // sunrise AM -> 0..11
+      const sunrise24 = aH === 12 ? 0 : aH;
+      // sunset PM -> 12..23
+      const sunset24 = pH === 12 ? 12 : (pH + 12);
+
+      state.prefs.dayNight = [minutesToHHMM(sunrise24*60 + aM), minutesToHHMM(sunset24*60 + pM)];
+      saveState();
+    };
+    [srH,srM,ssH,ssM].forEach(i => i.addEventListener("blur", commitDayNight));
+
+    card1.appendChild(h);
+    card1.appendChild(p1);
+    card1.appendChild(p2);
+    card1.appendChild(p3);
+    card1.appendChild(p4);
+
+    const card2 = document.createElement("div");
+    card2.className = "card";
+    const h2 = document.createElement("h2");
+    h2.className = "card__title";
+    h2.textContent = "My Data";
+    const desc = document.createElement("p");
+    desc.className = "note";
+    desc.textContent = "You may forget, but we won't. Preferences and custom info are stored on this device unless you delete them. To sync to another device, export & copy, then paste & import on the other device.";
+
+    const btnRow = document.createElement("div");
+    btnRow.className = "dataBtns";
+    const exportBtn = document.createElement("button");
+    exportBtn.className = "dataBtn";
+    exportBtn.textContent = "Export & Copy";
+    const importBtn = document.createElement("button");
+    importBtn.className = "dataBtn";
+    importBtn.textContent = "Paste & Import";
+    btnRow.appendChild(exportBtn);
+    btnRow.appendChild(importBtn);
+
+    const msg = document.createElement("p");
+    msg.className = "note";
+    msg.textContent = "";
+
+    const ta = document.createElement("textarea");
+    ta.className = "u-input";
+    ta.placeholder = "Paste exported data here...";
+    ta.value = ui.importText || "";
+    ta.style.display = "none";
+
+    exportBtn.addEventListener("click", async () => {
+      ui.importArmed = false;
+      importBtn.classList.remove("is-armed");
+      ta.style.display = "none";
+
+      const jsonMin = JSON.stringify(state);
+      const crc = crc32Hex(jsonMin).toUpperCase();
+      const payload = `${EXPORT_PREFIX}${crc}\n${jsonMin}`;
+      try {
+        await navigator.clipboard.writeText(payload);
+        msg.textContent = "Copied. Paste and send to the other device.";
+      } catch {
+        msg.textContent = "Copy failed. Your browser may block clipboard access.";
+      }
+    });
+
+    importBtn.addEventListener("click", () => {
+      ui.importArmed = !ui.importArmed;
+      importBtn.classList.toggle("is-armed", ui.importArmed);
+      if (ui.importArmed) {
+        msg.textContent = "Preparing to import. This will overwrite this device. Click the button again to confirm.";
+        ta.style.display = "block";
+        ta.focus();
+      } else {
+        // confirm
+        const raw = (ta.value || "").trim();
+        ui.importText = raw;
+        const ok = tryImport(raw);
+        if (ok) {
+          msg.textContent = "Imported.";
+          ui.importText = "";
+          ta.value = "";
+          ta.style.display = "none";
+          importBtn.classList.remove("is-armed");
+        }
+      }
+    });
+
+    // click outside cancels armed state
+    document.addEventListener("pointerdown", (e) => {
+      if (ui.tab !== "settings") return;
+      if (!ui.importArmed) return;
+      if (e.target === importBtn) return;
+      if (e.target === ta) return;
+      ui.importArmed = false;
+      importBtn.classList.remove("is-armed");
+      msg.textContent = "";
+    }, { capture: true });
+
+    card2.appendChild(h2);
+    card2.appendChild(desc);
+    card2.appendChild(btnRow);
+    card2.appendChild(msg);
+    card2.appendChild(ta);
+
+    settingsInner.appendChild(card1);
+    settingsInner.appendChild(card2);
+  }
+
+  function mkSelectBtn(text, selected, onClick) {
+    const b = document.createElement("button");
+    b.className = "card__infoBtn" + (selected ? " is-selected" : "");
+    b.textContent = text;
+    b.addEventListener("click", onClick);
+    return b;
+  }
+
+  function hideCard(id, cardEl) {
+    if (!ui.editing) return;
+    cardEl.classList.add("is-hiding");
+    setTimeout(() => {
+      if (!state.cards.hidden.includes(id)) state.cards.hidden.push(id);
+      saveState();
+      renderRhythm();
+    }, 190);
+  }
+
+  function showCard(id, cardEl) {
+    if (!ui.editing) return;
+    // remove hidden and move to end of visible order
+    state.cards.hidden = state.cards.hidden.filter(x => x !== id);
+    state.cards.order = state.cards.order.filter(x => x !== id);
+    state.cards.order.push(id);
+    saveState();
+    renderRhythm();
+    // show animation on the card after rerender
+    requestAnimationFrame(() => {
+      const c = cardsGrid.querySelector(`[data-id="${cssEscape(id)}"]`);
+      if (c) { c.classList.add("is-showing"); setTimeout(() => c.classList.remove("is-showing"), 200); }
+    });
+  }
+
+  function deleteCustomCard(id) {
+    // delete from order/hidden/title
+    state.cards.order = state.cards.order.filter(x => x !== id);
+    state.cards.hidden = state.cards.hidden.filter(x => x !== id);
+    delete state.cards.titles[id];
+    saveState();
+    renderRhythm();
+  }
+
+  function renameCardId(oldId, newId) {
+    if (state.cards.order.includes(newId) && newId !== oldId) return;
+    state.cards.order = state.cards.order.map(x => x === oldId ? newId : x);
+    state.cards.hidden = state.cards.hidden.map(x => x === oldId ? newId : x);
+    if (state.cards.titles[oldId] != null) {
+      state.cards.titles[newId] = state.cards.titles[oldId];
+      delete state.cards.titles[oldId];
+    }
+    saveState();
+    renderRhythm();
+  }
+
+  function switchCustomUnit(id, unit) {
+    const c = parseCustomId(id);
+    if (!c) return;
+    const newId = buildCustomId(unit, c.begin, c.end);
+    if (newId !== id) renameCardId(id, newId);
+  }
+
+  function addCustomCard() {
+    setEditing(true);
+
+    const today = new Date();
+    const begin = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const end = new Date(today.getFullYear(), today.getMonth() + 1, today.getDate());
+    begin.setHours(0,0,0,0); end.setHours(0,0,0,0);
+
+    let id = buildCustomId("weeks", begin, end);
+    // ensure unique id
+    let bump = 0;
+    while (state.cards.order.includes(id) && bump < 20) {
+      bump++;
+      const e2 = new Date(end.getFullYear(), end.getMonth(), end.getDate() + bump);
+      id = buildCustomId("weeks", begin, e2);
+    }
+
+    state.cards.order = [id, ...state.cards.order.filter(x => x !== id)];
+    state.cards.hidden = state.cards.hidden.filter(x => x !== id);
+    state.cards.titles[id] = "My Project Phase";
+    saveState();
+    renderRhythm();
+  }
+
+  function setupSortable() {
+    if (ui.sortable) { ui.sortable.destroy(); ui.sortable = null; }
+    if (!ui.editing) return;
+
+    ui.sortable = new Sortable(cardsGrid, {
+      animation: 160,
+      delayOnTouchOnly: true,
+      delay: 150,
+      filter: "input, button, textarea, .card__toggle",
+      preventOnFilter: false,
+      onEnd: () => {
+        const ids = Array.from(cardsGrid.querySelectorAll(".card")).map(c => c.getAttribute("data-id"));
+        // rebuild order but keep any items not currently rendered (shouldn't happen)
+        state.cards.order = ids;
+        saveState();
+        renderRhythm();
+      }
+    });
+  }
+
+  function tickUpdate() {
+    if (ui.tab !== "rhythm") return;
+    const now = new Date();
+    const cards = cardsGrid.querySelectorAll(".card");
+    cards.forEach(card => {
+      const id = card.getAttribute("data-id");
+      const spec = computeCardSpec(id, now);
+
+      // update title/info for non-custom or for custom in normal mode
+      const titleEl = card.querySelector(".card__title");
+      const infoEl = card.querySelector(".card__info");
+      if (!(spec.kind === "custom" && ui.editing)) {
+        titleEl.textContent = spec.title;
+        infoEl.textContent = spec.info;
+      }
+      updateDots(card, spec);
+    });
+  }
+
+  // ===== Export / Import CRC32 =====
+  function crc32Hex(str) {
+    let crc = 0 ^ (-1);
+    for (let i = 0; i < str.length; i++) {
+      crc = (crc >>> 8) ^ CRC_TABLE[(crc ^ str.charCodeAt(i)) & 0xFF];
+    }
+    crc = (crc ^ (-1)) >>> 0;
+    return crc.toString(16).padStart(8, "0");
+  }
+
+  const CRC_TABLE = (() => {
+    const t = new Uint32Array(256);
+    for (let i = 0; i < 256; i++) {
+      let c = i;
+      for (let k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+      t[i] = c >>> 0;
+    }
+    return t;
+  })();
+
+  function tryImport(raw) {
+    const lines = raw.split(/\r?\n/);
+    const first = lines[0] || "";
+    if (!first.startsWith(EXPORT_PREFIX)) {
+      showImportError("The imported data format is incorrect or was modified. Please copy & paste again.");
+      return false;
+    }
+    const claimed = first.slice(EXPORT_PREFIX.length).trim().toLowerCase();
+    const jsonStr = lines.slice(1).join("\n").trim();
+    const actual = crc32Hex(jsonStr).toLowerCase();
+    if (claimed !== actual) {
+      showImportError("The imported data format is incorrect or was modified. Please copy & paste again.");
+      return false;
+    }
+    const parsed = safeParse(jsonStr);
+    if (!parsed) {
+      showImportError("The imported data format is incorrect or was modified. Please copy & paste again.");
+      return false;
+    }
+    state = normalizeState(parsed);
+    applyTheme(state.prefs.theme);
+    saveState();
+    renderSettings();
+    if (ui.tab === "rhythm") renderRhythm();
+    return true;
+  }
+
+  function showImportError(msg) {
+    // bottom text in settings card is already updated by caller logic; keep it simple:
+    // use an alert? requirement: avoid meaningless popups; so we just keep message text.
+    const notes = settingsInner.querySelectorAll(".note");
+    const last = notes[notes.length - 1];
+    if (last) last.textContent = msg;
+  }
+
+  function cssEscape(s) {
+    return (window.CSS && CSS.escape) ? CSS.escape(s) : s.replace(/["\\]/g, "\\$&");
+  }
+
+  
+  // ===== Events =====
+  el("tab-rhythm").addEventListener("click", (e) => { tabShake(e.currentTarget); setTab("rhythm"); });
+  el("tab-settings").addEventListener("click", (e) => { tabShake(e.currentTarget); setTab("settings"); });
+
+  el("btn-edit").addEventListener("click", (e) => { tabShake(e.currentTarget); setEditing(!ui.editing); });
+  el("btn-add").addEventListener("click", (e) => { tabShake(e.currentTarget); addCustomCard(); });
+
+  window.addEventListener("resize", () => tickUpdate());
+
+  // ===== Init =====
+  loadState();
+  renderRhythm();
+  renderSettings();
+  setInterval(tickUpdate, 1000);
+})();
 </script>
 
 <body>
-  <div class="hint">
-    SITE INITIALIZING
-  </div>
+ <header class="header">
+    <div class="tabs">
+      <button class="tab-btn is-active" id="tab-rhythm">Rhythm</button>
+      <button class="tab-btn" id="tab-settings">Settings</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="section is-active" id="section-rhythm">
+      <div class="wrap">
+        <div class="grid" id="cardsGrid"></div>
+      </div>
+      <div class="bottomActions">
+        <button class="textBtn" id="btn-edit">Edit</button>
+        <button class="textBtn" id="btn-add">Add</button>
+      </div>
+    </section>
+
+    <section class="section" id="section-settings">
+      <div class="settingsWrap">
+        <div class="settingsInner" id="settingsInner"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+
 </body>
 </html>
